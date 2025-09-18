@@ -15,6 +15,7 @@ services:
   
   nestjs:
     build:
+      context: ../api
       dockerfile: Dockerfile
     container_name: api-nestjs
     depends_on:
@@ -23,13 +24,20 @@ services:
       - "3001:3001"
     networks:
       - app-network
+    volumes:
+      - ../api:/usr/src/app
 
   react:
     build:
+      context: ../front/employers
       dockerfile: Dockerfile
     container_name: front-react
     ports:
-     - "3000:3000"
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - ../front/employers:/app
 
 volumes:
   postgres_data:

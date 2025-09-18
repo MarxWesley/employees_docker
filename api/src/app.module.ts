@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EmployersModule } from './employers/employers.module';
+import { EmployerModule } from './employers/employers.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employer } from './employers/entities/employer.entity';
 
 
 @Module({
-  imports: [EmployersModule,
+  imports: [EmployerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',         
       host: 'localhost',     
