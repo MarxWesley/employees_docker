@@ -24,8 +24,6 @@ services:
       - "3001:3001"
     networks:
       - app-network
-    volumes:
-      - ../api:/usr/src/app
 
   react:
     build:
@@ -36,8 +34,6 @@ services:
       - "3000:3000"
     networks:
       - app-network
-    volumes:
-      - ../front/employers:/app
 
 volumes:
   postgres_data:
