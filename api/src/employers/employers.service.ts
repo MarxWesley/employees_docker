@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
+import { Employer } from './entities/employer.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class EmployersService {
-  create(createEmployerDto: CreateEmployerDto) {
-    return 'This action adds a new employer';
+export class EmployerService {
+  constructor(
+    @InjectRepository(Employer)
+    private employerRepository: Repository<Employer>,
+  ) {}
+
+  async create(data: Partial<Employer>) {
+    const employer = this.employerRepository.create(data);
+    return await this.employerRepository.save(employer);
   }
 
-  findAll() {
-    return `This action returns all employers`;
+  async findAll() {
+    return await this.employerRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employer`;
+  async findOne(id: number) {
+    const employer = await this.employerRepository.findOne({ where: { id } });
+    if (!employer) {
+      throw new NotFoundException(`Employer com ID ${id} não encontrado`);
+    }
+    return employer;
   }
 
-  update(id: number, updateEmployerDto: UpdateEmployerDto) {
-    return `This action updates a #${id} employer`;
+  async update(id: number, data: Partial<Employer>) {
+    const employer = await this.findOne(id);
+    Object.assign(employer, data);
+    return await this.employerRepository.save(employer);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} employer`;
+  async remove(id: number) {
+    const employer = await this.findOne(id);
+    await this.employerRepository.remove(employer);
   }
 }

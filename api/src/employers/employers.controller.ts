@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { EmployersService } from './employers.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { EmployerService } from './employers.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
+import { Employer } from './entities/employer.entity';
 
 @Controller('employers')
-export class EmployersController {
-  constructor(private readonly employersService: EmployersService) {}
-
+export class EmployerController {
+  constructor(private readonly employerService: EmployerService) { }
+ 
   @Post()
-  create(@Body() createEmployerDto: CreateEmployerDto) {
-    return this.employersService.create(createEmployerDto);
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async create(@Body() body: CreateEmployerDto) {
+    return await this.employerService.create(body);
   }
 
   @Get()
-  findAll() {
-    return this.employersService.findAll();
+  async findAll() {
+    return await this.employerService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employersService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.employerService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmployerDto: UpdateEmployerDto) {
-    return this.employersService.update(+id, updateEmployerDto);
+  @Put(':id')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async update(@Param('id', ParseIntPipe) id: number, @Body() body: Partial<UpdateEmployerDto>) {
+    return await this.employerService.update(id, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employersService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.employerService.remove(id);
+    return { message: 'Employer removido com sucesso' };
   }
 }
